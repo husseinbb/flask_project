@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Add New Customer{% endblock %}
+
+{% block content %}
+    <h1>Add New Customer</h1>
+    <form method="POST" action="/customers/add">
+        <div class="form-group">
+            <label for="first_name">First Name</label>
+            <input type="text" class="form-control" id="first_name" name="first_name" required>
+        </div>
+        <div class="form-group">
+            <label for="last_name">Last Name</label>
+            <input type="text" class="form-control" id="last_name" name="last_name" required>
+        </div>
+        <div class="form-group">
+            <label for="birthdate">Birthdate</label>
+            <input type="date" class="form-control" id="birthdate" name="birthdate" required>
+        </div>
+        <button type="submit" class="btn btn-success">Save</button>
+        <a href="/" class="btn btn-default">Cancel</a>
+    </form>
+{% endblock %}

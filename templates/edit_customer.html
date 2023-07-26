@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Customer{% endblock %}
+
+{% block content %}
+    <h1>Edit Customer</h1>
+    <form method="POST" action="/customers/{{ customer.id }}/edit">
+        <div class="form-group">
+            <label for="first_name">First Name</label>
+            <input type="text" class="form-control" id="first_name" name="first_name" value="{{ customer.first_name }}" required>
+        </div>
+        <div class="form-group">
+            <label for="last_name">Last Name</label>
+            <input type="text" class="form-control" id="last_name" name="last_name" value="{{ customer.last_name }}" required>
+        </div>
+        <div class="form-group">
+            <label for="birthdate">Birthdate</label>
+            <input type="date" class="form-control" id="birthdate" name="birthdate" value="{{ customer.birthdate }}">
+        </div>
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+    </form>
+{% endblock %}
