@@ -2,6 +2,9 @@ from flask import Flask, request, render_template, url_for, redirect
 import os
 from models.database import db
 from models.customer import Customer
+from models.item import Item
+from models.order_item import OrderItem
+from models.order import Order
 from flask_bootstrap import Bootstrap
 
 app = Flask(__name__)
@@ -16,7 +19,7 @@ def home():
 @app.route('/customers', methods=['GET'])
 def get_customers():
     customers = Customer.query.all()
-    return render_template('get_customer.html', customers=customers)
+    return render_template('customer/get_customers.html', customers=customers)
 
 
 @app.route('/customers/<int:customer_id>/edit', methods=['POST', 'GET'])
@@ -27,7 +30,7 @@ def edit_customer(customer_id):
         return "Customer not found", 404
     
     if request.method == 'GET':
-        return render_template('edit_customer.html', customer=customer)
+        return render_template('customer/edit_customer.html', customer=customer)
 
     customer.first_name = request.form['first_name']
     customer.last_name = request.form['last_name']
@@ -60,7 +63,55 @@ def add_customer():
 
         return redirect(url_for('get_customers'))
 
-    return render_template('add_customer.html')
+    return render_template('customer/add_customer.html')
+
+
+@app.route('/items', methods=['GET'])
+def get_items():
+    items = Item.query.all()
+    return render_template('item/get_items.html', items=items)
+
+@app.route('/items/<int:item_id>/edit', methods=['POST', 'GET'])
+def edit_item(item_id):
+
+    item = Item.query.get(item_id)
+    if not item:
+        return "Item not found", 404
+    
+    if request.method == 'GET':
+        return render_template('item/edit_item.html', item=item)
+
+    item.name = request.form['name']
+    item.price = request.form['price']
+    db.session.commit()
+
+    return redirect(url_for('get_items'))
+
+@app.route('/items/<int:item_id>/delete', methods=['POST'])
+def delete_item(item_id):
+    item = Item.query.get(item_id)
+    if not item:
+        return "Item not found", 404
+    
+    db.session.delete(item)
+    db.session.commit()
+    return redirect(url_for('get_items'))
+
+
+
+@app.route('/items/add', methods=['GET', 'POST'])
+def add_item():
+    if request.method == 'POST':
+        name = request.form['name']
+        price = request.form['price']
+
+        new_item = Item(name=name, price=price)
+        db.session.add(new_item)
+        db.session.commit()
+
+        return redirect(url_for('get_items'))
+
+    return render_template('item/add_item.html')
 
 
 if (__name__ == '__main__'):
