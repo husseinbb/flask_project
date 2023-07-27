@@ -135,12 +135,21 @@ def edit_order(order_id):
 
 @app.route('/orders/<int:order_id>/delete', methods=['POST'])
 def delete_order(order_id):
-    order = Order.query.get(order_id)
-    if not order:
-        return "Order not found", 404
-    
-    db.session.delete(order)
-    db.session.commit()
+
+    try:
+        with db.session.begin():
+            order = Order.query.get(order_id)
+            if not order:
+                return "Order not found", 404
+
+            order_item = OrderItem.query.get(order_id)
+            db.session.delete(order_item)            
+            db.session.delete(order)
+            db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return(f"Error occurred: {str(e)}")
+
     return redirect(url_for('get_orders'))
 
 @app.route('/orders/add', methods=['GET', 'POST'])
@@ -148,18 +157,41 @@ def add_order():
     if request.method == 'POST':
         date = request.form['date']
         customer_id = request.form['customer_id']
+        item_id = request.form['item_id']
 
-        new_order = Order(date=date, customer_id=customer_id)
-        db.session.add(new_order)
-        db.session.commit()
+        try:
+            with db.session.begin():
+                new_order = Order(date=date, customer_id=customer_id)
+                db.session.add(new_order)
+                db.session.flush()
 
-        return redirect(url_for('get_orders'))
-    
+                new_order_item = OrderItem(order_id=new_order.id, item_id=item_id)
+                db.session.add(new_order_item)
+                db.session.commit()
+                return redirect(url_for('get_orders'))
+        except Exception as e:
+            db.session.rollback()
+            return(f"Error occurred: {str(e)}")
+
     customers = Customer.query.all()
-    if not customers:
-        return "Must be at least one customer to be able to create an order", 404
+    items = Item.query.all()
+    if not items or not customers:
+            return "Must be at least one item to be able to create an order", 404
 
-    return render_template('order/add_order.html', customers=customers)
+    return render_template('order/add_order.html', customers=customers, items=items)
+
+
+@app.route('/items_ordered_more_than', methods=['GET'])
+def items_ordered_more_than():
+    count = request.args.get('count', type=int, default=0)
+
+    ordered_items = db.session.query(Item.id, Item.name, db.func.count(OrderItem.item_id).label('order_count')) \
+        .join(OrderItem, Item.id == OrderItem.item_id) \
+        .group_by(Item.id, Item.name) \
+        .having(db.func.count(OrderItem.item_id) >= count) \
+        .all()
+
+    return render_template('items_ordered_more_than.html', items=ordered_items)
 
 if (__name__ == '__main__'):
     app.run()
