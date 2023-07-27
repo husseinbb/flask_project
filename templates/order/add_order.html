@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Add New Order{% endblock %}
+
+{% block content %}
+    <h1>Add New Order</h1>
+    <form method="POST" action="/orders/add">
+        <div class="form-group">
+            <label for="date">Date</label>
+            <input type="date" class="form-control" id="date" name="date" required>
+        </div>
+        <div class="form-group">
+            <label for="customer_id">Customer</label>
+            <select class="form-control" id="customer_id" name="customer_id" required>
+                {% for customer in customers %}
+                <option value="{{ customer.id }}">ID: {{ customer.id }} - Name: {{customer.first_name}}{{customer.last_name}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-success">Save</button>
+        <a href="/" class="btn btn-default">Cancel</a>
+    </form>
+{% endblock %}

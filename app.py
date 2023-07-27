@@ -97,8 +97,6 @@ def delete_item(item_id):
     db.session.commit()
     return redirect(url_for('get_items'))
 
-
-
 @app.route('/items/add', methods=['GET', 'POST'])
 def add_item():
     if request.method == 'POST':
@@ -113,6 +111,55 @@ def add_item():
 
     return render_template('item/add_item.html')
 
+@app.route('/orders', methods=['GET'])
+def get_orders():
+    orders = Order.query.all()
+    return render_template('order/get_orders.html', orders=orders)
+
+@app.route('/orders/<int:order_id>/edit', methods=['POST', 'GET'])
+def edit_order(order_id):
+
+    order = Order.query.get(order_id)
+    if not order:
+        return "Order not found", 404
+    
+    if request.method == 'GET':
+        customers = Customer.query.all()
+        return render_template('order/edit_order.html', order=order, customers=customers)
+
+    order.date = request.form['date']
+    order.customer_id = request.form['customer_id']
+    db.session.commit()
+
+    return redirect(url_for('get_orders'))
+
+@app.route('/orders/<int:order_id>/delete', methods=['POST'])
+def delete_order(order_id):
+    order = Order.query.get(order_id)
+    if not order:
+        return "Order not found", 404
+    
+    db.session.delete(order)
+    db.session.commit()
+    return redirect(url_for('get_orders'))
+
+@app.route('/orders/add', methods=['GET', 'POST'])
+def add_order():
+    if request.method == 'POST':
+        date = request.form['date']
+        customer_id = request.form['customer_id']
+
+        new_order = Order(date=date, customer_id=customer_id)
+        db.session.add(new_order)
+        db.session.commit()
+
+        return redirect(url_for('get_orders'))
+    
+    customers = Customer.query.all()
+    if not customers:
+        return "Must be at least one customer to be able to create an order", 404
+
+    return render_template('order/add_order.html', customers=customers)
 
 if (__name__ == '__main__'):
     app.run()
