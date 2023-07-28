@@ -4,7 +4,7 @@
 
 {% block content %}
     <h1>Add New Order</h1>
-    <form method="POST" action="/orders/add">
+    <form method="POST" action="{{ url_for('add_order') }}">
         <div class="form-group">
             <label for="date">Date</label>
             <input type="date" class="form-control" id="date" name="date" required>
@@ -26,6 +26,6 @@
             </select>
         </div>
         <button type="submit" class="btn btn-success">Save</button>
-        <a href="/" class="btn btn-default">Cancel</a>
+        <a href="{{ url_for('get_orders') }}" class="btn btn-default">Cancel</a>
     </form>
 {% endblock %}

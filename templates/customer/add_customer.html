@@ -4,7 +4,7 @@
 
 {% block content %}
     <h1>Add New Customer</h1>
-    <form method="POST" action="/customers/add">
+    <form method="POST" action="{{ url_for('add_customer') }}">
         <div class="form-group">
             <label for="first_name">First Name</label>
             <input type="text" class="form-control" id="first_name" name="first_name" required>
@@ -18,6 +18,6 @@
             <input type="date" class="form-control" id="birthdate" name="birthdate" required>
         </div>
         <button type="submit" class="btn btn-success">Save</button>
-        <a href="/" class="btn btn-default">Cancel</a>
+        <a href="{{ url_for('add_customer') }}" class="btn btn-default">Cancel</a>
     </form>
 {% endblock %}

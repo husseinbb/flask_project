@@ -4,7 +4,7 @@
 
 {% block content %}
     <h1>Edit Customer</h1>
-    <form method="POST" action="/customers/{{ customer.id }}/edit">
+    <form method="POST" action="{{ url_for('edit_customer', customer_id=customer.id) }}">
         <div class="form-group">
             <label for="first_name">First Name</label>
             <input type="text" class="form-control" id="first_name" name="first_name" value="{{ customer.first_name }}" required>

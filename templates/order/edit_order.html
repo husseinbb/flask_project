@@ -4,7 +4,7 @@
 
 {% block content %}
     <h1>Edit Order</h1>
-    <form method="POST" action="/orders/{{ order.id }}/edit">
+    <form method="POST" action="{{ url_for('add_order', order_id=order.id) }}">
         <div class="form-group">
             <label for="date">Date</label>
             <input type="date" class="form-control" id="date" name="date" value="{{ order.date }}">
