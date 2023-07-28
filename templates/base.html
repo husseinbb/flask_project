@@ -11,15 +11,15 @@
             </div>
             <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
-                    <li><a href="/customers">Customers</a></li>
-                    <li><a href="/orders">Orders</a></li>
-                    <li><a href="/items">Items</a></li>
-                    <li><a href="/analytics">Analytics</a></li>
+                    <li><a href="{{ url_for('get_customers') }}">Customers</a></li>
+                    <li><a href="{{ url_for('get_orders') }}">Orders</a></li>
+                    <li><a href="{{ url_for('get_items') }}">Items</a></li>
+                    <li><a href="{{ url_for('analytics') }}">Analytics</a></li>
                 </ul>
             </div>
         </div>
     </nav>
-    
+
     <div class="container">
         {% block content %}
         {% endblock %}
