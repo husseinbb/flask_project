@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Analytics{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <h1 class="text-center">Analytics</h1>
+    <div class="list-group mt-4">
+        <a href="{{ url_for('customers_orders_info') }}" class="list-group-item">Customers Orders Info</a>
+        <a href="{{ url_for('items_ordered_most_to_least') }}" class="list-group-item">Items Ordered Most to Least</a>
+        <a href="{{ url_for('items_ordered_more_than') }}" class="list-group-item">Items Ordered More Than</a>
+    </div>
+</div>
+
+{% endblock %}

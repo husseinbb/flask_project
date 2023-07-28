@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Customers Orders{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <h1 class="text-center">Customers Order Information</h1>
+    <table class="table table-hover mt-4">
+        <thead>
+            <tr>
+                <th>Customer ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Order Count</th>
+                <th>Avg. Order Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for customer in customers %}
+                <tr>
+                    <td>{{ customer.id }}</td>
+                    <td>{{ customer.first_name }}</td>
+                    <td>{{ customer.last_name }}</td>
+                    <td>{{ customer.order_count }}</td>
+                    <td>{{ customer.avg_order_amount}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

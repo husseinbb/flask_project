@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Items Ordered{% endblock %}
+
+{% block content %}
+
+    <div class="container mt-4">
+        <h1 class="text-center">Items Ordered Most to Least</h1>
+        <table class="table table-hover mt-4">
+            <thead>
+                <tr>
+                    <th>Item ID</th>
+                    <th>Item Name</th>
+                    <th>Order Count</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                    <tr>
+                        <td>{{ item.id }}</td>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.order_count }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}

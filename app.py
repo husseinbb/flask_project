@@ -6,6 +6,7 @@ from models.item import Item
 from models.order_item import OrderItem
 from models.order import Order
 from flask_bootstrap import Bootstrap
+from sqlalchemy import func
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://' + os.environ.get('DB_USERNAME', '') + ':' + os.environ.get('DB_PASSWORD', '') +'@localhost/' + os.environ.get('DB_DATABASE', '')
@@ -14,7 +15,7 @@ bootstrap = Bootstrap(app)
 
 @app.route('/')
 def home():
-    return "Hello world!"
+    return render_template('index.html')
 
 @app.route('/customers', methods=['GET'])
 def get_customers():
@@ -181,7 +182,11 @@ def add_order():
     return render_template('order/add_order.html', customers=customers, items=items)
 
 
-@app.route('/items_ordered_more_than', methods=['GET'])
+@app.route('/analytics', methods=['GET'])
+def analytics():
+    return render_template('analytics/anlaytics_main_page.html')
+
+@app.route('/analytics/items_ordered_more_than', methods=['GET'])
 def items_ordered_more_than():
     count = request.args.get('count', type=int, default=0)
 
@@ -191,7 +196,35 @@ def items_ordered_more_than():
         .having(db.func.count(OrderItem.item_id) >= count) \
         .all()
 
-    return render_template('items_ordered_more_than.html', items=ordered_items)
+    return render_template('analytics/items_ordered_more_than.html', items=ordered_items)
+
+
+@app.route('/analytics/customers_orders_info', methods=['GET'])
+def customers_orders_info():
+    customers_info = db.session.query(
+        Customer.id,
+        Customer.first_name,
+        Customer.last_name,
+        func.count(Order.id).label('order_count'),
+        func.avg(Item.price).label('avg_order_amount')
+    ).join(Order) \
+    .join(OrderItem, Order.id == OrderItem.order_id) \
+    .join(Item, OrderItem.item_id == Item.id) \
+    .group_by(Customer.id).all()
+
+    return render_template('analytics/customers_orders_info.html', customers=customers_info)
+
+
+@app.route('/analytics/items_ordered_most_to_least', methods=['GET'])
+def items_ordered_most_to_least():
+    ordered_items = db.session.query(Item.id, Item.name, func.count(OrderItem.item_id).label('order_count')) \
+        .join(OrderItem, Item.id == OrderItem.item_id) \
+        .group_by(Item.id, Item.name) \
+        .order_by(func.count(OrderItem.item_id).desc()) \
+        .all()
+    
+    return render_template('analytics/items_ordered_most_to_least.html', items=ordered_items)
+
 
 if (__name__ == '__main__'):
     app.run()
